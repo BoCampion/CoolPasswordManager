@@ -1,0 +1,11 @@
+{
+    "name": "Cool passoword manager",
+    "version": "1.0.0",
+    "description": "for stupid ppl who forget their passwords",
+    "manifest_version": 3,
+    "author": "me",
+    "action":{
+        "default_popup": "index.html",
+        "default_title": "password manager"
+    }
+}

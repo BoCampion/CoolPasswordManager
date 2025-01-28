@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Manager</title>
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+    <header>
+        <h1>My Password Manager</h1>
+        <button data-modal-target="#modal" class="open-modal-button">Add new password</button>
+        
+    </header>
+
+    <!-- List of stored data -->
+        <div class="sidebar">
+            <a href="#" style="padding-left: 20px; color: inherit;
+            text-decoration: inherit; font-size:larger; font-weight: bold;">Accounts</a>
+          <a href="/autocomplete" style="padding-left: 20px; color: inherit;
+          text-decoration: inherit; font-size:larger; font-weight: bold;">Test</a>
+        </div>
+
+    <div class="password-list">
+        {% for entry in data %}
+        <div class="entry">
+            <div class="details">
+                <h2>{{ entry[0] }}</h2>
+                <p><strong>URL:</strong> {{ entry[1] }}</p>
+                <p><strong>Username:</strong> {{ entry[2] }}</p>
+                <p><strong>Password:</strong> <span id="password{{ loop.index }}" data-password="{{ entry[3] }}">********</span></p>
+                <button onclick="Look_at_yo_shit({{ loop.index }}, this)" class="buttons1">show</button>
+                
+
+                
+            </div>
+            <form method="POST" action="/delete" class="delete-form">
+                <input type="hidden" name="website" value="{{ entry[0] }}">
+                <button type="submit" class="delete-entry">Delete</button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+
+
+    <div class="modal" id="modal">
+        <div class="modal-header">
+            <div class="title">Add New Password</div>
+            <button data-close-button class="close-button">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form method="POST" action="/">
+                <label for="website">Website:</label>
+                <input type="text" id="website" name="website" required>
+                <br>
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+                <br>
+                <label for="password">Password:</label>
+                <input type="text" id="password" name="password" required>
+                <button class="buttons" onclick="cool_password()" value="">Generate strong password</button>
+                <br>
+                <input type="submit" value="Save" class="buttons1">
+            </form>
+        </div>
+    </div>
+    <div id="overlay"></div>
+
+    <script src="static/script.js"></script>
+</body>
+</html>
