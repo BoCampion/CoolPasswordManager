@@ -55,6 +55,10 @@ main {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+.main-container {
+    display: flex; /* Makes the div a flexbox container */
+}
+
 /* Password List */
 .password-list .entry {
     padding: 10px 15px;
@@ -162,8 +166,12 @@ button.delete-entry:hover {
     background-color: #ff0000;
 }
 .password-list {
-    margin: 20px 0;
     animation: myAnim 1s ease 0s 1 normal both;
+    z-index: -100;
+    width: 70vw; /* takes up 70% of the viewport width */
+    height: 80vh; /* Padding is included in this height. */
+    overflow-y: auto; /* Scrolls only vertically */
+    margin: auto 20em; /* adjust as needed */
 }
 
 .password-list .entry {
@@ -176,6 +184,10 @@ button.delete-entry:hover {
     padding: 15px;
     margin-bottom: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: auto;
+    max-width: auto;
+
+
 }
 
 .password-list .entry .details {
@@ -249,11 +261,11 @@ button.delete-entry:hover {
 .sidebar {
     margin: 0;
     padding: 0;
-    width: 200px;
     background-color: #f1f1f1;
     position: fixed;
-    height: 100%;
     overflow: auto;
+    width: 15vw; /* Takes up 15% of the viewport width, adjust as needed */
+    height: 85vh; /* Remember, padding is included in this height! */
   }
   
   /* Sidebar links */

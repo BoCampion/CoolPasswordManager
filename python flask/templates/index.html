@@ -13,35 +13,38 @@
         
     </header>
 
-    <!-- List of stored data -->
+    <div class="main-container">
+
+        <!-- List of stored data -->
         <div class="sidebar">
             <a href="#" style="padding-left: 20px; color: inherit;
             text-decoration: inherit; font-size:larger; font-weight: bold;">Accounts</a>
-          <a href="/autocomplete" style="padding-left: 20px; color: inherit;
-          text-decoration: inherit; font-size:larger; font-weight: bold;">Test</a>
+            <a href="/autocomplete" style="padding-left: 20px; color: inherit;
+            text-decoration: inherit; font-size:larger; font-weight: bold;">Test</a>
         </div>
 
-    <div class="password-list">
-        {% for entry in data %}
-        <div class="entry">
-            <div class="details">
-                <h2>{{ entry[0] }}</h2>
-                <p><strong>URL:</strong> {{ entry[1] }}</p>
-                <p><strong>Username:</strong> {{ entry[2] }}</p>
-                <p><strong>Password:</strong> <span id="password{{ loop.index }}" data-password="{{ entry[3] }}">********</span></p>
-                <button onclick="Look_at_yo_shit({{ loop.index }}, this)" class="buttons1">show</button>
-                
+        <div class="password-list">
+            {% for entry in data %}
+            <div class="entry">
+                <div class="details">
+                    <h2>{{ entry[0] }}</h2>
+                    <p><strong>URL:</strong> {{ entry[1] }}</p>
+                    <p><strong>Username:</strong> {{ entry[2] }}</p>
+                    <p><strong>Password:</strong> <span id="password{{ loop.index }}" data-password="{{ entry[3] }}">********</span></p>
+                    <button onclick="Look_at_yo_shit({{ loop.index }}, this)" class="buttons1">show</button>
+                    
 
-                
+                    
+                </div>
+                <form method="POST" action="/delete" class="delete-form">
+                    <input type="hidden" name="website" value="{{ entry[0] }}">
+                    <button type="submit" class="delete-entry">Delete</button>
+                </form>
             </div>
-            <form method="POST" action="/delete" class="delete-form">
-                <input type="hidden" name="website" value="{{ entry[0] }}">
-                <button type="submit" class="delete-entry">Delete</button>
-            </form>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
 
+    </div>
 
     <div class="modal" id="modal">
         <div class="modal-header">
