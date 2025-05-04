@@ -3,9 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="static/styles/style.css">
 </head>
 <body>
+    
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="{{ url_for('static', filename='cool_logo.jpg') }}" alt="Cool Logo">
+            <h2>CoolThing</h2>
+            <hr>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="/dashboard">⌂<span></span> Dashboard</a></li>
+            <li><a href="#favorites">☆<span></span> Favorites</a></li>
+            <li><a href="/">⚷<span></span> Accounts</a></li>
+            <li><a href="#settings">⚙<span></span> Settings</a></li>
+            <li><a href="#about"><span>ℹ</span> About</a></li>
+            <li><a href="/login"><span>Logout</span></a></li>
+        </ul>
+        
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class="dashboard-container">
+        <h1 class="dashbaord">Password Health</h1>
+    </div>
+
+    <br>
+    <br>
+    <br>
+
+
+    <div class="table-section">
+        <table>
+            <thead>
+                <tr>
+                    <th>Site</th>
+                    <th>Username</th>
+                    <th>Password</th>
+                    <th>Password leaks</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in entries %}
+                <tr onclick="showDetails('{{ entry[1] }}', '{{ entry[2] }}', '{{ entry[3] }}')">
+                    <td>{{ entry[1] }}</td>
+                    <td>{{ entry[2] }}</td>
+                    <td>••••••••</td>
+                    <td>{{ entry[4] }}</td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+
+        <div class="entry-details" id="entryDetails">
+            <button class="close-details-btn" onclick="closeDetails()">×</button>
+            <h3>Entry Details</h3>
+            <p><strong>Site:</strong> <span id="detailSite"></span></p>
+            <p><strong>Username:</strong> <span id="detailUsername"></span></p>
+            <p><strong>Password:</strong> <span id="detailPassword"></span></p>
+        </div>
+        
+        
+    </div>
     
 </body>
 </html>

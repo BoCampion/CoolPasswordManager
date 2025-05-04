@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register - CoolThing</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/login.css') }}">
+</head>
+<body>
+  <div class="login-container">
+    <h2>Register for CoolThing</h2>
+    <form action="/register" method="POST">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required placeholder="Choose a username">
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required placeholder="Choose a password">
+      </div>
+      <button type="submit" class="btn-login">Register</button>
+      {% if error %}
+        <div class="error-message">{{ error }}</div>
+      {% endif %}
+    </form>
+    <div class="footer-text">
+      Already have an account? <a href="{{ url_for('login') }}">Log in</a>
+    </div>
+  </div>
+</body>
+</html>

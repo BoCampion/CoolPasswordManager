@@ -13,11 +13,12 @@
             <hr>
         </div>
         <ul class="sidebar-menu">
-            <li><a href="#dashboard">⌂<span></span> Dashboard</a></li>
+            <li><a href="/dashboard">⌂<span></span> Dashboard</a></li>
             <li><a href="#favorites">☆<span></span> Favorites</a></li>
             <li><a href="#accounts">⚷<span></span> Accounts</a></li>
             <li><a href="#settings">⚙<span></span> Settings</a></li>
             <li><a href="#about"><span>ℹ</span> About</a></li>
+            <li><a href="/login"><span>Logout</span></a></li>
         </ul>
         
     </div>
@@ -31,7 +32,8 @@
                     <img src="{{ url_for('static', filename='blank-profile-circle.png') }}" alt="Profile Picture">
                 </div>
                 <div class="greeting-text">
-                    <h2>Welcome, {{ session['username'] }}</h2>
+                    <h2>Welcome</h2>
+                    <h2>{{ session['username'] }}</h2>
                 </div>
             </div>
             <br>
@@ -61,7 +63,7 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Site</th>
+                        <th>Site2</th>
                         <th>Username</th>
                         <th>Password</th>
                         <th>Remove</th>
@@ -70,6 +72,7 @@
                 <tbody>
                     {% for entry in entries %}
                     <tr onclick="showDetails('{{ entry[1] }}', '{{ entry[2] }}', '{{ entry[3] }}')">
+                        <!-- {{ site }} -->
                         <td>{{ entry[1] }}</td>
                         <td>{{ entry[2] }}</td>
                         <td>••••••••</td>

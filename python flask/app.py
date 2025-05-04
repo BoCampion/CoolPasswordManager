@@ -1,16 +1,15 @@
 from flask import Flask, request, jsonify, render_template, redirect, session, url_for
 import sqlite3
-
+from pwned import *
+import favicon
 app = Flask(__name__)
-app.secret_key = 'your_super_secret_key'  # Required for sessions
+app.secret_key = 'cool'  # SOME SESSION SHIT IDK
 DB = 'passwords.db'
 
-# Database Initialization
+# FUCK ASS BITCH DB
 def init_db():
     with sqlite3.connect(DB) as conn:
         c = conn.cursor()
-
-        # Create users (logins) table
         c.execute('''
             CREATE TABLE IF NOT EXISTS logins (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -18,8 +17,6 @@ def init_db():
                 password TEXT NOT NULL
             )
         ''')
-
-        # Create credentials table linked to users
         c.execute('''
             CREATE TABLE IF NOT EXISTS credentials (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -31,7 +28,7 @@ def init_db():
             )
         ''')
 
-        # Insert default user if doesn't exist
+        # SHIT DONT EXIST
         c.execute("SELECT * FROM logins WHERE username = ?", ('test',))
         if not c.fetchone():
             c.execute("INSERT INTO logins (username, password) VALUES (?, ?)", ('test', 'test'))
@@ -39,7 +36,7 @@ def init_db():
         conn.commit()
 
 
-# Home page (requires login)
+# STUPID ASS LOGIN
 @app.route('/')
 def home():
     if not session.get('logged_in'):
@@ -50,7 +47,8 @@ def home():
         entries = c.fetchall()
     return render_template('index.html', entries=entries)
 
-# Add credential
+
+# NEW PASSWORD TYPE SHIT
 @app.route('/add', methods=['POST'])
 def add_credential():
     if not session.get('logged_in'):
@@ -64,7 +62,9 @@ def add_credential():
         conn.commit()
     return redirect('/')
 
-# Delete credential
+
+
+# GET YO ASS OUTA HERE
 @app.route('/delete/<int:entry_id>', methods=['POST'])
 def delete_credential(entry_id):
     if not session.get('logged_in'):
@@ -75,7 +75,9 @@ def delete_credential(entry_id):
         conn.commit()
     return redirect('/')
 
-# Login route
+
+
+# WHO TF IS U
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -89,8 +91,8 @@ def login():
 
         if user:
             session['logged_in'] = True
-            session['username'] = username  # optional, for personalizing later
-            return redirect('/')  # ✅ Goes to index.html via home() route
+            session['username'] = username  
+            return redirect('/') 
         else:
             print("nope")
             return render_template('login.html', error="Invalid username or password")
@@ -99,14 +101,54 @@ def login():
     return render_template('login.html')
 
 
-
-# Logout route
+#BYE BYE
 @app.route('/logout')
 def logout():
     session.pop('logged_in', None)
     return redirect(url_for('login'))
 
-# Run server
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        with sqlite3.connect(DB) as conn:
+            c = conn.cursor()
+            # DOES SHIT EXIST?
+            c.execute("SELECT * FROM logins WHERE username = ?", (username,))
+            existing_user = c.fetchone()
+
+            if existing_user:
+                return render_template('register.html', error="Username already exists")
+
+            # RETARD SIGNED UP
+            c.execute("INSERT INTO logins (username, password) VALUES (?, ?)", (username, password))
+            conn.commit()
+
+        return redirect(url_for('login'))
+
+    return render_template('register.html')
+
+
+
+#DASHBOARD TYPA SHIT
+@app.route('/dashboard')
+def dashboard():
+    #CALL API TO SEE IF YO ASS EXPOSED
+    with sqlite3.connect(DB) as conn:
+        c = conn.cursor()
+        c.execute('SELECT id, site, username, password FROM credentials')
+        entries = c.fetchall()
+        print(entries)
+        entries = [i + (check_password(i[-1]), ) for i in entries]
+    #SENDS API RESPONSE <3
+    return render_template('dashboard.html', entries=entries)
+
+
+
+
+# RUN PLS
 if __name__ == '__main__':
     init_db()
     app.run(debug=True)
