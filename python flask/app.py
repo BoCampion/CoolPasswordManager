@@ -2,18 +2,19 @@ from flask import Flask, request, jsonify, render_template, redirect, session, u
 import sqlite3
 from pwned import *
 import favicon
+
 app = Flask(__name__)
-app.secret_key = 'cool'  # SOME SESSION SHIT IDK
+app.secret_key = 'cool'
 DB = 'passwords.db'
 
-# FUCK ASS BITCH DB
+# Initialize DB
 def init_db():
     with sqlite3.connect(DB) as conn:
         c = conn.cursor()
         c.execute('''
             CREATE TABLE IF NOT EXISTS logins (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT NOT NULL,
+                username TEXT NOT NULL UNIQUE,
                 password TEXT NOT NULL
             )
         ''')
@@ -27,57 +28,67 @@ def init_db():
                 FOREIGN KEY (user_id) REFERENCES logins(id)
             )
         ''')
-
-        # SHIT DONT EXIST
+        # Create test user if doesn't exist
         c.execute("SELECT * FROM logins WHERE username = ?", ('test',))
         if not c.fetchone():
             c.execute("INSERT INTO logins (username, password) VALUES (?, ?)", ('test', 'test'))
 
         conn.commit()
 
-
-# STUPID ASS LOGIN
+# Home route (view passwords)
 @app.route('/')
 def home():
     if not session.get('logged_in'):
         return redirect(url_for('login'))
+
+    query = request.args.get('query', '')
+    user_id = session.get('user_id')
+
     with sqlite3.connect(DB) as conn:
         c = conn.cursor()
-        c.execute('SELECT id, site, username, password FROM credentials')
+        if query:
+            c.execute('''
+                SELECT id, site, username, password FROM credentials 
+                WHERE user_id = ? AND (site LIKE ? OR username LIKE ?)
+            ''', (user_id, f'%{query}%', f'%{query}%'))
+        else:
+            c.execute('SELECT id, site, username, password FROM credentials WHERE user_id = ?', (user_id,))
         entries = c.fetchall()
-    return render_template('index.html', entries=entries)
+    return render_template('index.html', entries=entries, query=query)
 
-
-# NEW PASSWORD TYPE SHIT
+# Add credential
 @app.route('/add', methods=['POST'])
 def add_credential():
     if not session.get('logged_in'):
         return redirect(url_for('login'))
+
     site = request.form['site']
     username = request.form['username']
     password = request.form['password']
+    user_id = session.get('user_id')
+
     with sqlite3.connect(DB) as conn:
         c = conn.cursor()
-        c.execute('INSERT INTO credentials (site, username, password) VALUES (?, ?, ?)', (site, username, password))
+        c.execute('INSERT INTO credentials (user_id, site, username, password) VALUES (?, ?, ?, ?)',
+                  (user_id, site, username, password))
         conn.commit()
     return redirect('/')
 
-
-
-# GET YO ASS OUTA HERE
+# Delete credential (only if it belongs to user)
 @app.route('/delete/<int:entry_id>', methods=['POST'])
 def delete_credential(entry_id):
     if not session.get('logged_in'):
         return redirect(url_for('login'))
+
+    user_id = session.get('user_id')
+
     with sqlite3.connect(DB) as conn:
         c = conn.cursor()
-        c.execute('DELETE FROM credentials WHERE id = ?', (entry_id,))
+        c.execute('DELETE FROM credentials WHERE id = ? AND user_id = ?', (entry_id, user_id))
         conn.commit()
     return redirect('/')
 
-
-
-# WHO TF IS U
+# Login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -91,22 +102,21 @@ def login():
 
         if user:
             session['logged_in'] = True
-            session['username'] = username  
-            return redirect('/') 
+            session['username'] = username
+            session['user_id'] = user[0]  # Store user_id
+            return redirect('/')
         else:
-            print("nope")
             return render_template('login.html', error="Invalid username or password")
-            
 
     return render_template('login.html')
 
-
-#BYE BYE
+# Logout
 @app.route('/logout')
 def logout():
-    session.pop('logged_in', None)
+    session.clear()
     return redirect(url_for('login'))
 
+# Register
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -115,14 +125,12 @@ def register():
 
         with sqlite3.connect(DB) as conn:
             c = conn.cursor()
-            # DOES SHIT EXIST?
             c.execute("SELECT * FROM logins WHERE username = ?", (username,))
             existing_user = c.fetchone()
 
             if existing_user:
                 return render_template('register.html', error="Username already exists")
 
-            # RETARD SIGNED UP
             c.execute("INSERT INTO logins (username, password) VALUES (?, ?)", (username, password))
             conn.commit()
 
@@ -130,25 +138,24 @@ def register():
 
     return render_template('register.html')
 
-
-
-#DASHBOARD TYPA SHIT
+# Dashboard: check passwords with Pwned API
 @app.route('/dashboard')
 def dashboard():
-    #CALL API TO SEE IF YO ASS EXPOSED
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+
+    user_id = session.get('user_id')
     with sqlite3.connect(DB) as conn:
         c = conn.cursor()
-        c.execute('SELECT id, site, username, password FROM credentials')
+        c.execute('SELECT id, site, username, password FROM credentials WHERE user_id = ?', (user_id,))
         entries = c.fetchall()
-        print(entries)
-        entries = [i + (check_password(i[-1]), ) for i in entries]
-    #SENDS API RESPONSE <3
+        entries = [entry + (check_password(entry[3]), ) for entry in entries]
     return render_template('dashboard.html', entries=entries)
 
-
-
-
-# RUN PLS
+@app.route('/settings')
+def settings():
+    return render_template('settings.html')
+# Start the app
 if __name__ == '__main__':
     init_db()
     app.run(debug=True)

@@ -16,14 +16,11 @@
             <li><a href="/dashboard">⌂<span></span> Dashboard</a></li>
             <li><a href="#favorites">☆<span></span> Favorites</a></li>
             <li><a href="#accounts">⚷<span></span> Accounts</a></li>
-            <li><a href="#settings">⚙<span></span> Settings</a></li>
+            <li><a href="/settings">⚙<span></span> Settings</a></li>
             <li><a href="#about"><span>ℹ</span> About</a></li>
             <li><a href="/login"><span>Logout</span></a></li>
         </ul>
-        
     </div>
-<br>
-<br>
 
     <div class="content">
         <div class="greeting">
@@ -36,16 +33,20 @@
                     <h2>{{ session['username'] }}</h2>
                 </div>
             </div>
-            <br>
-            <br>
-            <br>
+            <br><br><br>
             <hr>
         </div>
 
+        <!-- SEARCH FOR YO SHIT-->
+        <div class="action-bar">
+            <button class="add-password-btn" onclick="togglePopup()">+ Add Password</button>
+            <form method="GET" action="/" class="search-form">
+                <input type="text" name="query" placeholder="Search by site or username..." value="{{ query | default('') }}">
+                <button type="submit">Search</button>
+            </form>
+        </div>
 
-        
-        <button class="add-password-btn" onclick="togglePopup()">+ Add Password</button>
-
+        <!-- Popup Form -->
         <div class="popup-form" id="popupForm">
             <form method="POST" action="/add">
                 <h2>Add New Password</h2>
@@ -59,11 +60,12 @@
             </form>
         </div>
 
+        <!-- Password Table -->
         <div class="table-section">
             <table>
                 <thead>
                     <tr>
-                        <th>Site2</th>
+                        <th>Site</th>
                         <th>Username</th>
                         <th>Password</th>
                         <th>Remove</th>
@@ -72,7 +74,6 @@
                 <tbody>
                     {% for entry in entries %}
                     <tr onclick="showDetails('{{ entry[1] }}', '{{ entry[2] }}', '{{ entry[3] }}')">
-                        <!-- {{ site }} -->
                         <td>{{ entry[1] }}</td>
                         <td>{{ entry[2] }}</td>
                         <td>••••••••</td>
@@ -86,6 +87,7 @@
                 </tbody>
             </table>
 
+            <!-- Entry Details Sidebar -->
             <div class="entry-details" id="entryDetails">
                 <button class="close-details-btn" onclick="closeDetails()">×</button>
                 <h3>Entry Details</h3>
@@ -93,11 +95,9 @@
                 <p><strong>Username:</strong> <span id="detailUsername"></span></p>
                 <p><strong>Password:</strong> <span id="detailPassword"></span></p>
             </div>
-            
-            
         </div>
     </div>
 
-<script src="static/index.js"></script>
+    <script src="static/index.js"></script>
 </body>
 </html>
