@@ -7,7 +7,7 @@ app = Flask(__name__)
 app.secret_key = 'cool'
 DB = 'passwords.db'
 
-# Initialize DB
+# Initialize DB 
 def init_db():
     with sqlite3.connect(DB) as conn:
         c = conn.cursor()
