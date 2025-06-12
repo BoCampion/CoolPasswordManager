@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - CoolThing Password Manager</title>
+    <link rel="stylesheet" href="static/styles/style.css">
+    <link rel="stylesheet" href="static/styles/about.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="{{ url_for('static', filename='cool_logo.jpg') }}" alt="Cool Logo">
+            <h2>CoolThing</h2>
+            <hr>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="/dashboard">⌂<span style="margin-right: 8px;"></span>Dashboard</a></li>
+            <li><a href="/favorites">☆<span style="margin-right: 8px;"></span>Favorites</a></li>
+            <li><a href="/"><span style="margin-right: 10x;">⚷  A</span>ccounts</a></li>
+            <li><a href="/settings"><span style="margin-right: 8x;" >⚙  S</span>ettings</a></li>
+            <li ><a href="/about"><span style="margin-right: 8px;">ℹ</span>About</a></li>
+            <li style="margin-left: auto;"><a href="/login"><span> Logout</span></a></li>
+        </ul>
+    </div>
+
+    <div class="content">
+        <div class="greeting">
+            <div class="greeting-container">
+                <div class="pfp">
+                    <img src="{{ url_for('static', filename='blank-profile-circle.png') }}" alt="Profile Picture">
+                </div>
+                <div class="greeting-text">
+                    <h2>Welcome</h2>
+                    <h2>{{ session['username'] }}</h2>
+                </div>
+            </div>
+            <br><br><br>
+            <hr>
+        </div>
+
+        <div class="about-content">
+            <div class="about-section">
+                <h2>About CoolThing Password Manager</h2>
+                <p>Welcome to CoolThing Password Manager, your secure solution for managing passwords across all your online accounts. Our mission is to make password management simple, secure, and user-friendly.</p>
+            </div>
+
+            <div class="about-section">
+                <h2>Key Features</h2>
+                <ul class="feature-list">
+                    <li>Secure password storage with encryption</li>
+                    <li>Easy password organization by website/application</li>
+                    <li>Password strength checking and breach detection</li>
+                    <li>Quick search functionality</li>
+                    <li>User-friendly interface</li>
+                    <li>Secure login system</li>
+                </ul>
+            </div>
+
+            <div class="about-section">
+                <h2>Security First</h2>
+                <p>Your security is our top priority. We implement industry-standard security practices to ensure your passwords remain protected. Our system includes:</p>
+                <ul class="feature-list">
+                    <li>Secure session management</li>
+                    <li>Protected password storage</li>
+                    <li>Regular security updates</li>
+                    <li>Breach detection integration</li>
+                </ul>
+            </div>
+
+            <div class="about-section">
+                <h2>Contact & Support</h2>
+                <p>If you have any questions or need assistance, please don't hesitate to reach out to our support team. We're here to help you make the most of your password management experience.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

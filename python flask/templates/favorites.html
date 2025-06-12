@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favorites - CoolThing Password Manager</title>
+    <link rel="stylesheet" href="static/styles/style.css">
+    <link rel="stylesheet" href="static/styles/favorites.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="{{ url_for('static', filename='cool_logo.jpg') }}" alt="Cool Logo">
+            <h2>CoolThing</h2>
+            <hr>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="/dashboard">⌂<span style="margin-right: 8px;"></span>Dashboard</a></li>
+            <li><a href="/favorites">☆<span style="margin-right: 8px;"></span>Favorites</a></li>
+            <li><a href="/"><span style="margin-right: 10x;">⚷  A</span>ccounts</a></li>
+            <li><a href="/settings"><span style="margin-right: 8x;" >⚙  S</span>ettings</a></li>
+            <li ><a href="/about"><span style="margin-right: 8px;">ℹ</span>About</a></li>
+            <li style="margin-left: auto;"><a href="/login"><span> Logout</span></a></li>
+        </ul>
+    </div>
+
+    <div class="content">
+        <div class="greeting">
+            <div class="greeting-container">
+                <div class="pfp">
+                    <img src="{{ url_for('static', filename='blank-profile-circle.png') }}" alt="Profile Picture">
+                </div>
+                <div class="greeting-text">
+                    <h2>Welcome</h2>
+                    <h2>{{ session['username'] }}</h2>
+                </div>
+            </div>
+            <br><br><br>
+            <hr>
+        </div>
+
+        <div class="favorites-content">
+            <h2>Favorite Passwords</h2>
+            <div class="favorites-grid">
+                {% for entry in entries %}
+                <div class="favorite-card">
+                    <h3>{{ entry[1] }}</h3>
+                    <p>Username: {{ entry[2] }}</p>
+                    <p>Password: ••••••••</p>
+                    <div class="favorite-actions">
+                        <button class="favorite-button" onclick="showDetails('{{ entry[1] }}', '{{ entry[2] }}', '{{ entry[3] }}')">View</button>
+                        <form method="POST" action="/delete/{{ entry[0] }}" style="display:inline;">
+                            <button type="submit" class="favorite-button remove-button" onclick="return confirm('Delete this entry?')">Remove</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showDetails(site, username, password) {
+            alert(`Site: ${site}\nUsername: ${username}\nPassword: ${password}`);
+        }
+    </script>
+</body>
+</html>

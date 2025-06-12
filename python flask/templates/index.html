@@ -4,6 +4,31 @@
     <meta charset="UTF-8">
     <title>Password Manager</title>
     <link rel="stylesheet" href="static/styles/style.css">
+    <style>
+        .favorite-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            padding: 5px;
+            color: #666;
+            transition: color 0.3s;
+        }
+
+        .favorite-btn.active {
+            color: #ffd700;
+        }
+
+        .favorite-btn:hover {
+            color: #ffd700;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+    </style>
 </head>
 <body>
     <div class="sidebar">
@@ -13,12 +38,12 @@
             <hr>
         </div>
         <ul class="sidebar-menu">
-            <li><a href="/dashboard">⌂<span></span> Dashboard</a></li>
-            <li><a href="#favorites">☆<span></span> Favorites</a></li>
-            <li><a href="#accounts">⚷<span></span> Accounts</a></li>
-            <li><a href="/settings">⚙<span></span> Settings</a></li>
-            <li><a href="#about"><span>ℹ</span> About</a></li>
-            <li><a href="/login"><span>Logout</span></a></li>
+            <li><a href="/dashboard">⌂<span style="margin-right: 8px;"></span>Dashboard</a></li>
+            <li><a href="/favorites">☆<span style="margin-right: 8px;"></span>Favorites</a></li>
+            <li><a href="/"><span style="margin-right: 10x;">⚷  A</span>ccounts</a></li>
+            <li><a href="/settings"><span style="margin-right: 8x;" >⚙  S</span>ettings</a></li>
+            <li ><a href="/about"><span style="margin-right: 8px;">ℹ</span>About</a></li>
+            <li style="margin-left: auto;"><a href="/login"><span> Logout</span></a></li>
         </ul>
     </div>
 
@@ -61,14 +86,14 @@
         </div>
 
         <!-- Password Table -->
-        <div class="table-section">
+
             <table>
                 <thead>
                     <tr>
                         <th>Site</th>
                         <th>Username</th>
                         <th>Password</th>
-                        <th>Remove</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -78,9 +103,15 @@
                         <td>{{ entry[2] }}</td>
                         <td>••••••••</td>
                         <td>
-                            <form method="POST" action="/delete/{{ entry[0] }}" style="display:inline;">
-                                <button type="submit" onclick="return confirm('Delete this entry?')">Delete</button>
-                            </form>
+                            <div class="table-actions">
+                                <button class="favorite-btn {% if entry[4] %}active{% endif %}" 
+                                        onclick="toggleFavorite(event, {{ entry[0] }})">
+                                    ★
+                                </button>
+                                <form method="POST" action="/delete/{{ entry[0] }}" style="display:inline;">
+                                    <button type="submit" onclick="return confirm('Delete this entry?')">Delete</button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     {% endfor %}
@@ -95,9 +126,44 @@
                 <p><strong>Username:</strong> <span id="detailUsername"></span></p>
                 <p><strong>Password:</strong> <span id="detailPassword"></span></p>
             </div>
-        </div>
     </div>
 
-    <script src="static/index.js"></script>
+    <script>
+        function toggleFavorite(event, entryId) {
+            event.stopPropagation(); // Prevent row click
+            const button = event.target;
+            
+            fetch(`/toggle_favorite/${entryId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    button.classList.toggle('active');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function togglePopup() {
+            const popup = document.getElementById('popupForm');
+            popup.style.display = popup.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function showDetails(site, username, password) {
+            const details = document.getElementById('entryDetails');
+            document.getElementById('detailSite').textContent = site;
+            document.getElementById('detailUsername').textContent = username;
+            document.getElementById('detailPassword').textContent = password;
+            details.style.display = 'block';
+        }
+
+        function closeDetails() {
+            document.getElementById('entryDetails').style.display = 'none';
+        }
+    </script>
 </body>
 </html>

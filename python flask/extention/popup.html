@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Password Manager Extension</title>
+    <style>
+        body { font-family: Arial, sans-serif; width: 300px; padding: 10px; }
+        #message { margin-top: 10px; }
+    </style>
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+    <div id="user-info">Checking login status...</div>
+
+    <form id="password-form" style="display: none;">
+        <input type="text" id="site" placeholder="Site" required><br>
+        <input type="text" id="username" placeholder="Username" required><br>
+        <input type="password" id="password" placeholder="Password" required><br>
+        <button type="submit">Add Credential</button>
+    </form>
+
+    <div id="message"></div>
+
+    <script src="popup.js"></script>
+</body>
+</html>
