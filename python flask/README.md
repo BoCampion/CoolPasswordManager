@@ -9,4 +9,4 @@ A simple password manager web app built with Flask, SQLite, and a browser extens
 Make sure you have Python 3 installed. Then, install the dependencies:
 
 ```bash
-pip install flask flask-cors
+pip install flask flask-cors pwnedapi
