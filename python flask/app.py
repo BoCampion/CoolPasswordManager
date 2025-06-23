@@ -65,9 +65,24 @@ def init_db():
         c.execute("SELECT * FROM logins WHERE username = ?", ('test',))
         if not c.fetchone():
             c.execute("INSERT INTO logins (username, password) VALUES (?, ?)", ('test', hash_password('test')))
-            c.execute("INSERT INTO settings (user_id, theme) VALUES (1, 'dark')")
+            c.execute("INSERT INTO settings (user_id, theme) VALUES (1, 'light')")
 
         conn.commit()
+
+
+@app.context_processor
+def inject_theme():
+    theme = 'light'  # Default theme
+    if session.get('logged_in'):
+        user_id = session.get('user_id')
+        with sqlite3.connect(DB) as conn:
+            conn.row_factory = sqlite3.Row
+            c = conn.cursor()
+            c.execute("SELECT theme FROM settings WHERE user_id = ?", (user_id,))
+            settings_row = c.fetchone()
+            if settings_row and settings_row['theme']:
+                theme = settings_row['theme']
+    return dict(theme=theme)
 
 # --- Routes ---
 @app.route('/')
@@ -79,6 +94,7 @@ def home():
     user_id = session.get('user_id')
 
     with sqlite3.connect(DB) as conn:
+        conn.row_factory = sqlite3.Row  # This allows accessing columns by name
         c = conn.cursor()
         if query:
             c.execute('''
@@ -87,15 +103,22 @@ def home():
             ''', (user_id, f'%{query}%', f'%{query}%'))
         else:
             c.execute('SELECT id, site, username, password, favorite FROM credentials WHERE user_id = ?', (user_id,))
+        
         entries_raw = c.fetchall()
 
     entries = []
+    colors = ["#6366F1", "#8B5CF6", "#EC4899", "#F59E0B", "#10B981", "#3B82F6", "#EF4444", "#14B8A6"]
+    
     for e in entries_raw:
+        entry_dict = dict(e)
         try:
-            decrypted_password = fernet.decrypt(e[3].encode()).decode()
+            decrypted_password = fernet.decrypt(entry_dict['password'].encode()).decode()
         except Exception:
             decrypted_password = "[Decryption Failed]"
-        entries.append((e[0], e[1], e[2], decrypted_password, e[4]))
+
+        entry_dict['password'] = decrypted_password
+        entry_dict['color'] = colors[hash(entry_dict['site']) % len(colors)]
+        entries.append(entry_dict)
 
     return render_template('index.html', entries=entries, query=query)
 
@@ -108,7 +131,7 @@ def add_credential():
     username = request.form['username']
     password = request.form['password']
     user_id = session.get('user_id')
-
+    
     from pwned import check_password
     try:
         leaked_count = check_password(password)
@@ -237,17 +260,24 @@ def favorites():
 
     user_id = session.get('user_id')
     with sqlite3.connect(DB) as conn:
+        conn.row_factory = sqlite3.Row
         c = conn.cursor()
-        c.execute('SELECT id, site, username, password FROM credentials WHERE user_id = ? AND favorite = 1', (user_id,))
+        c.execute('SELECT id, site, username, password, favorite FROM credentials WHERE user_id = ? AND favorite = 1', (user_id,))
         entries_raw = c.fetchall()
 
     entries = []
+    colors = ["#6366F1", "#8B5CF6", "#EC4899", "#F59E0B", "#10B981", "#3B82F6", "#EF4444", "#14B8A6"]
+
     for e in entries_raw:
+        entry_dict = dict(e)
         try:
-            decrypted_password = fernet.decrypt(e[3].encode()).decode()
+            decrypted_password = fernet.decrypt(entry_dict['password'].encode()).decode()
         except Exception:
             decrypted_password = "[Decryption Failed]"
-        entries.append((e[0], e[1], e[2], decrypted_password))
+        
+        entry_dict['password'] = decrypted_password
+        entry_dict['color'] = colors[hash(entry_dict['site']) % len(colors)]
+        entries.append(entry_dict)
 
     return render_template('favorites.html', entries=entries)
 
@@ -267,9 +297,9 @@ def settings():
         settings_data = c.fetchone()
         
         if not settings_data:
-            c.execute('INSERT INTO settings (user_id, theme) VALUES (?, ?)', (user_id, 'dark'))
+            c.execute('INSERT INTO settings (user_id, theme) VALUES (?, ?)', (user_id, 'light'))
             conn.commit()
-            settings_data = (user_id, None, 0, 1, 'dark')
+            settings_data = (user_id, None, 0, 1, 'light')
 
         settings = {
             'email': settings_data[1],

@@ -4,10 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="static/styles/style.css">
     <script src="{{ url_for('static', filename='index.js') }}"></script>
 </head>
-<body>
+<body class="{{ theme }}">
     <div class="sidebar">
         <div class="sidebar-header">
             <img src="{{ url_for('static', filename='cool_logo.jpg') }}" alt="Cool Logo">
@@ -17,8 +20,8 @@
         <ul class="sidebar-menu">
             <li><a href="/dashboard">⌂<span style="margin-right: 8px;"></span>Dashboard</a></li>
             <li><a href="/favorites">☆<span style="margin-right: 8px;"></span>Favorites</a></li>
-            <li><a href="/"><span style="margin-right: 10x;">⚷  A</span>ccounts</a></li>
-            <li><a href="/settings"><span style="margin-right: 8x;" >⚙  S</span>ettings</a></li>
+            <li><a href="/"><span style="margin-right: 10x;">⚷  </span>Accounts</a></li>
+            <li><a href="/settings"><span style="margin-right: 8x;" >⚙  </span>Settings</a></li>
             <li ><a href="/about"><span style="margin-right: 8px;">ℹ</span>About</a></li>
             <li style="margin-left: auto;"><a href="/login"><span> Logout</span></a></li>
         </ul>
@@ -110,5 +113,50 @@
             <p><strong>Password:</strong> <span id="detailPassword"></span></p>
         </div>
     </div>
+    <div id="particles-js"></div>
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+    <script>
+        const isDarkMode = document.body.classList.contains('dark');
+        const particleColor = isDarkMode ? "#5c5d8d" : "#9ca3af";
+
+        tsParticles.load("particles-js", {
+            fpsLimit: 60,
+            interactivity: {
+                events: {
+                    onHover: { enable: true, mode: "repulse" },
+                    resize: true,
+                },
+                modes: {
+                    repulse: { distance: 100, duration: 0.4 },
+                },
+            },
+            particles: {
+                color: { value: particleColor },
+                links: {
+                    color: particleColor,
+                    distance: 150,
+                    enable: true,
+                    opacity: 0.4,
+                    width: 1,
+                },
+                move: {
+                    direction: "none",
+                    enable: true,
+                    outModes: { default: "bounce" },
+                    random: false,
+                    speed: 1,
+                    straight: false,
+                },
+                number: {
+                    density: { enable: true, area: 800 },
+                    value: 80,
+                },
+                opacity: { value: 0.5 },
+                shape: { type: "circle" },
+                size: { value: { min: 1, max: 3 } },
+            },
+            detectRetina: true,
+        });
+    </script>
 </body>
 </html>
