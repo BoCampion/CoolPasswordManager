@@ -1,0 +1,4 @@
+Flask==2.3.2
+Flask-Cors==4.0.0
+cryptography==42.0.5
+pwnedapi==1.1.0
