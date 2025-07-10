@@ -21,7 +21,7 @@ git clone https://github.com/yourusername/coolthing-password-manager.git
 cd coolthing-password-manager
 
 # 2. Install Python dependencies
-pip install -r requirements.txt (Or pip3 install -r requirements.txt)
+pip install -r req.txt (Or pip3 install -r req.txt)
 
 # 3. Generate encryption key
 python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
